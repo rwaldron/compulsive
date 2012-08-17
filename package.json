@@ -1,0 +1,35 @@
+{
+  "name": "compulsive",
+  "description": "Time based event loop process queue",
+  "version": "0.1.1",
+  "homepage": "https://github.com/rwldrn/compulsive",
+  "author": {
+    "name": "Rick Waldron",
+    "email": "waldron.rick@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rwldrn/compulsive.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rwldrn/compulsive/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/rwldrn/compulsive/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "lib/compulsive",
+  "engines": {
+    "node": ">=0.6.13"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.3.9"
+  },
+  "keywords": []
+}
