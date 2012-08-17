@@ -1,6 +1,6 @@
 # compulsive
 
-Time based process
+Time based event loop process queue
 
 ## Getting Started
 Install the module with: `npm install compulsive`
