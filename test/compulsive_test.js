@@ -3,37 +3,37 @@ var compulsive = require("../lib/compulsive.js");
 // console.log( compulsive );
 
 
-[
-  [ 1000, 1000, 1000, 1000, 1000, 1000, 1000 ],
-  [ 0, 100, 500, 1000, 1250, 1500, 2000, 5000 ]
-].forEach(function( times, i ) {
+// [
+//   [ 1000, 1000, 1000, 1000, 1000, 1000, 1000 ],
+//   [ 0, 100, 500, 1000, 1250, 1500, 2000, 5000 ]
+// ].forEach(function( times, i ) {
 
-  var key = "compulsive.wait " + i;
+//   var key = "compulsive.wait " + i;
 
-  exports[ key ] = {
-    setUp: function( done ) {
-      done();
-    }
-  };
+//   exports[ key ] = {
+//     setUp: function( done ) {
+//       done();
+//     }
+//   };
 
 
-  times.forEach(function( time, k ) {
+//   times.forEach(function( time, k ) {
 
-    var title = time + ", " + k;
+//     var title = time + ", " + k;
 
-    exports[ key ][ title ] = function( test ) {
-      test.expect(1);
+//     exports[ key ][ title ] = function( test ) {
+//       test.expect(1);
 
-      var calledAt = Date.now(),
-          expectAt = calledAt + time;
+//       var calledAt = Date.now(),
+//           expectAt = calledAt + time;
 
-      compulsive.wait( time, function() {
-        test.equal( Date.now(), expectAt, title );
-        test.done();
-      });
-    };
-  });
-});
+//       compulsive.wait( time, function() {
+//         test.equal( Date.now(), expectAt, title );
+//         test.done();
+//       });
+//     };
+//   });
+// });
 
 
 exports[ "compulsive.loop" ] = {
@@ -90,11 +90,12 @@ exports[ "compulsive.loop" ] = {
 
     compulsive.wait( 1000, function() {
 
-      var result = [ "a", "b", "c" ].reduce(function( p, v ) {
+      var result = [ a, b, c ].reduce(function( p, v ) {
         return p + v;
       }, 0);
 
       test.equal( result, 9, "sum of a, b, c counters is 9" );
+      test.done();
     });
   }
 };
@@ -151,7 +152,7 @@ exports[ "compulsive.queue:wait" ] = {
       },
       {
         wait: 200,
-        task: function() {
+        task: function( task ) {
           var now = Date.now();
 
           test.equal( now, expectAt, "queued fn 2: on time" );
@@ -161,7 +162,49 @@ exports[ "compulsive.queue:wait" ] = {
         }
       }
     ]);
+  },
+  end: function( test ) {
+    test.expect(5);
+
+    var counter = 0;
+
+    // Wait queue
+    compulsive.queue([
+      {
+        wait: 10,
+        task: function() {
+          counter++;
+          test.ok( true );
+        }
+      },
+      {
+        wait: 10,
+        task: function() {
+          counter++;
+          test.ok( true );
+        }
+      },
+      {
+        wait: 10,
+        task: function() {
+          counter++;
+          test.ok( true );
+        }
+      },
+      {
+        wait: 100,
+        task: function( task ) {
+
+          task.on("end", function() {
+            test.ok( true, "Task end event fired" );
+            test.equal( counter, 3, "counter equals 3" );
+            test.done();
+          });
+        }
+      }
+    ]);
   }
+
 };
 
 /*
