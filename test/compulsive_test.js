@@ -3,37 +3,37 @@ var compulsive = require("../lib/compulsive.js");
 // console.log( compulsive );
 
 
-// [
-//   [ 1000, 1000, 1000, 1000, 1000, 1000, 1000 ],
-//   [ 0, 100, 500, 1000, 1250, 1500, 2000, 5000 ]
-// ].forEach(function( times, i ) {
+[
+  [ 1000, 1000, 1000, 1000, 1000, 1000, 1000 ],
+  [ 0, 100, 500, 1000, 1250, 1500, 2000, 5000 ]
+].forEach(function( times, i ) {
 
-//   var key = "compulsive.wait " + i;
+  var key = "compulsive.wait " + i;
 
-//   exports[ key ] = {
-//     setUp: function( done ) {
-//       done();
-//     }
-//   };
+  exports[ key ] = {
+    setUp: function( done ) {
+      done();
+    }
+  };
 
 
-//   times.forEach(function( time, k ) {
+  times.forEach(function( time, k ) {
 
-//     var title = time + ", " + k;
+    var title = time + ", " + k;
 
-//     exports[ key ][ title ] = function( test ) {
-//       test.expect(1);
+    exports[ key ][ title ] = function( test ) {
+      test.expect(1);
 
-//       var calledAt = Date.now(),
-//           expectAt = calledAt + time;
+      var calledAt = Date.now(),
+          expectAt = calledAt + time;
 
-//       compulsive.wait( time, function() {
-//         test.equal( Date.now(), expectAt, title );
-//         test.done();
-//       });
-//     };
-//   });
-// });
+      compulsive.wait( time, function() {
+        test.equal( Date.now(), expectAt, title );
+        test.done();
+      });
+    };
+  });
+});
 
 
 exports[ "compulsive.loop" ] = {
