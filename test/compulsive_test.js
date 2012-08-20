@@ -163,6 +163,49 @@ exports[ "compulsive.queue:wait" ] = {
       }
     ]);
   },
+  loop: function( test ) {
+    test.expect(6);
+
+    var calledAt = Date.now(),
+        expectAt = Date.now() + 100,
+        counter = 0;
+
+    // Wait queue
+    compulsive.queue([
+      {
+        wait: 100,
+        task: function() {
+          var now = Date.now();
+
+          test.equal( now, expectAt, "queued wait fn 1: on time" );
+          expectAt = now + 200;
+
+          counter++;
+        }
+      },
+      {
+        loop: 200,
+        task: function( task ) {
+          var now = Date.now();
+
+          if ( counter === 1 ) {
+            test.equal( now, expectAt, "queued loop fn 1: on time" );
+            test.equal( now, calledAt + 300, "queue lapse correct" );
+          }
+
+          if ( counter === 2 ) {
+            test.ok( "stop" in task );
+            test.equal( now, expectAt, "queued loop fn 2: on time" );
+            test.equal( now, calledAt + 500, "queue lapse correct" );
+            test.done();
+          }
+
+          expectAt = now + 200;
+          counter++;
+        }
+      }
+    ]);
+  },
   end: function( test ) {
     test.expect(5);
 
