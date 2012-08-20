@@ -33,7 +33,7 @@ var compulsive = require("../lib/compulsive.js");
       });
     };
   });
-})
+});
 
 
 exports[ "compulsive.loop" ] = {
@@ -60,6 +60,41 @@ exports[ "compulsive.loop" ] = {
 
         test.done();
       }
+    });
+  },
+  stop: function( test ) {
+    test.expect(1);
+
+    var a = 0, b = 0, c = 0;
+
+    compulsive.loop( 100, function() {
+      // console.log( "a", a );
+      if ( ++a === 1 ) {
+        this.stop();
+      }
+    });
+
+    compulsive.loop( 100, function() {
+      // console.log( "b", b );
+      if ( ++b === 3 ) {
+        this.stop();
+      }
+    });
+
+    compulsive.loop( 100, function( loop ) {
+      // console.log( "c", c );
+      if ( ++c === 5 ) {
+        loop.stop();
+      }
+    });
+
+    compulsive.wait( 1000, function() {
+
+      var result = [ "a", "b", "c" ].reduce(function( p, v ) {
+        return p + v;
+      }, 0);
+
+      test.equal( result, 9, "sum of a, b, c counters is 9" );
     });
   }
 };

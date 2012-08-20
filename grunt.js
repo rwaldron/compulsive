@@ -25,7 +25,10 @@ module.exports = function(grunt) {
         undef: true,
         boss: true,
         eqnull: true,
-        node: true
+        node: true,
+        strict: false,
+        es5: true,
+        loopfunc: true
       },
       globals: {
         exports: true
