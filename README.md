@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/rwldrn/compulsive.png)](http://travis-ci.org/rwldrn/compulsive)
 # compulsive
 
 Time based event loop process queue
