@@ -20,7 +20,7 @@ Wait `ms`, execute `callback`.
 Loop `ms`, execute `callback`.
 
 
-### compulsive.peat( count, ms, callback )
+### compulsive.repeat( count, ms, callback )
 
 Repeat `count` times, every `ms`, execute `callback`.
 
@@ -45,7 +45,7 @@ Queue tasks.
 ## Examples
 
 ```js
-var compulsive = require('compulsive');
+var compulsive = require("compulsive");
 
 
 compulsive.wait( 10, function() {
@@ -91,6 +91,73 @@ compulsive.queue([
   }
 ]);
 
+
+```
+
+
+Add compulsive api to your constructor's prototype:
+
+```js
+var compulsive = require("compulsive"),
+    priv = new require("es6-collections").WeakMap();
+
+function Nodebot() {
+  //... various nodebot constructor tasks
+
+  this.servos = {
+    right: new Servo(9),
+    left: new Servo(10)
+  };
+
+  priv.set( this, {
+    step: null
+  });
+}
+
+// Exposure grants the end dev control
+// over stepping positions (0-180˚)
+Nodebot.STEPS = {
+  // Step: [ R, L ]
+  right: { right: 120, left: 60 },
+  left:  { right: 60, left: 120 }
+};
+
+// Augment the Nodebot prototype
+// with compulsive APIs
+[ "wait", "loop", "queue" ].forEach(function( api ) {
+  Nodebot.prototype[ api ] = compulsive[ api ];
+});
+
+Nodebot.prototype.step = function() {
+  var p, next, last, degrees;
+
+  p = priv.get(this);
+  last = p.step;
+
+  next = last === "right" ? "left" : "right";
+  degrees = Nodebot.STEPS[ next ];
+
+
+  Object.keys( this.servos ).forEach(function( servo ) {
+    servo.move( degrees[ servo ] );
+  });
+};
+
+Nodebot.prototype.walk = function() {
+  this.loop( 1000, this.step.bind(this) );
+};
+
+
+module.exports = Nodebot;
+
+```
+
+```js
+var Nodebot = require("nodebot"), ,
+    bot = new Nodebot();
+
+
+bot.walk();
 
 ```
 
