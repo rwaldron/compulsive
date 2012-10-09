@@ -256,8 +256,8 @@ exports[ "compulsive.queue w/ context" ] = {
   setUp: function( done ) {
     done();
   },
-  context: function( test ) {
-    test.expect(1);
+  contextwait: function( test ) {
+    test.expect(2);
 
     function C() {}
     util.inherits( C, events.EventEmitter );
@@ -267,8 +267,8 @@ exports[ "compulsive.queue w/ context" ] = {
         counter = 0,
         context = new C();
 
-    context.once("waitover", function() {
-      test.ok( true, "dfkldkfg" );
+    context.once("waitover", function( o ) {
+      test.ok( o instanceof C, "correct wait context, 2" );
       test.done();
     });
 
@@ -277,7 +277,47 @@ exports[ "compulsive.queue w/ context" ] = {
       {
         wait: 100,
         task: function() {
-          this.emit("waitover");
+          test.ok( this instanceof C, "correct wait context, 1" );
+        }
+      },
+      {
+        wait: 100,
+        task: function() {
+          this.emit("waitover", this);
+        }
+      }
+    ]);
+  },
+  contextloop: function( test ) {
+    test.expect(2);
+
+    function C() {}
+    util.inherits( C, events.EventEmitter );
+
+    var calledAt = Date.now(),
+        expectAt = Date.now() + 100,
+        counter = 0,
+        context = new C();
+
+    context.once("loopstop", function( o ) {
+      test.ok( o instanceof C, "correct loop context, 2" );
+      test.done();
+    });
+
+    // Wait queue
+    compulsive.queue( context, [
+      {
+        wait: 100,
+        task: function() {
+          test.ok( this instanceof C, "correct wait context, 1" );
+        }
+      },
+      {
+        loop: 100,
+        task: function( loop ) {
+          if ( ++counter === 3 ) {
+            this.emit("loopstop", this);
+          }
         }
       }
     ]);
