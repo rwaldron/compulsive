@@ -1,4 +1,7 @@
-var compulsive = require("../lib/compulsive.js");
+var compulsive = require("../lib/compulsive.js"),
+    events = require("events"),
+    util = require("util");
+
 
 // console.log( compulsive );
 
@@ -247,8 +250,40 @@ exports[ "compulsive.queue:wait" ] = {
       }
     ]);
   }
-
 };
+
+exports[ "compulsive.queue w/ context" ] = {
+  setUp: function( done ) {
+    done();
+  },
+  context: function( test ) {
+    test.expect(1);
+
+    function C() {}
+    util.inherits( C, events.EventEmitter );
+
+    var calledAt = Date.now(),
+        expectAt = Date.now() + 100,
+        counter = 0,
+        context = new C();
+
+    context.once("waitover", function() {
+      test.ok( true, "dfkldkfg" );
+      test.done();
+    });
+
+    // Wait queue
+    compulsive.queue( context, [
+      {
+        wait: 100,
+        task: function() {
+          this.emit("waitover");
+        }
+      }
+    ]);
+  }
+};
+
 
 /*
   ======== A Handy Little Nodeunit Reference ========
