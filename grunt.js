@@ -31,7 +31,8 @@ module.exports = function(grunt) {
         loopfunc: true
       },
       globals: {
-        exports: true
+        exports: true,
+        setImmediate: true
       }
     }
   });

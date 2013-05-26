@@ -4,6 +4,16 @@ var compulsive = require("../lib/compulsive.js"),
 
 
 // console.log( compulsive );
+function fuzzy(actual, expected, allow) {
+  var high, low;
+  high = expected + allow;
+  low = expected - allow;
+
+  if ( actual >= low && actual <= high ) {
+    return true;
+  }
+  return false;
+}
 
 
 [
@@ -139,7 +149,7 @@ exports[ "compulsive.queue:wait" ] = {
     test.expect(3);
 
     var calledAt = Date.now(),
-        expectAt = Date.now() + 100,
+        expectAt = calledAt + 100,
         counter = 0;
 
     // Wait queue
@@ -149,7 +159,7 @@ exports[ "compulsive.queue:wait" ] = {
         task: function() {
           var now = Date.now();
 
-          test.equal( now, expectAt, "queued fn 1: on time" );
+          test.ok( fuzzy(now, expectAt, 1), "queued fn 1: on time (within 1ms)" );
           expectAt = now + 200;
         }
       },
@@ -158,8 +168,8 @@ exports[ "compulsive.queue:wait" ] = {
         task: function( task ) {
           var now = Date.now();
 
-          test.equal( now, expectAt, "queued fn 2: on time" );
-          test.equal( now, calledAt + 300, "queue lapse correct" );
+          test.ok( fuzzy(now, expectAt, 1), "queued fn 2: on time (within 1ms)" );
+          test.ok( fuzzy(now, calledAt + 300, 1), "queue lapse correct (within 1ms)");
 
           test.done();
         }
@@ -170,7 +180,7 @@ exports[ "compulsive.queue:wait" ] = {
     test.expect(6);
 
     var calledAt = Date.now(),
-        expectAt = Date.now() + 100,
+        expectAt = calledAt + 100,
         counter = 0;
 
     // Wait queue
@@ -263,7 +273,7 @@ exports[ "compulsive.queue w/ context" ] = {
     util.inherits( C, events.EventEmitter );
 
     var calledAt = Date.now(),
-        expectAt = Date.now() + 100,
+        expectAt = calledAt + 100,
         counter = 0,
         context = new C();
 
@@ -295,7 +305,7 @@ exports[ "compulsive.queue w/ context" ] = {
     util.inherits( C, events.EventEmitter );
 
     var calledAt = Date.now(),
-        expectAt = Date.now() + 100,
+        expectAt = calledAt + 100,
         counter = 0,
         context = new C();
 
